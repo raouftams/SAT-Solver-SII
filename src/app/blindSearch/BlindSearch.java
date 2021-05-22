@@ -2,13 +2,12 @@ package app.blindSearch;
 
 import app.ClausesSet;
 import app.Solution;
-
-import java.util.LinkedList;
 import java.util.Stack;
 
 
 public abstract class BlindSearch {
 
+	//Doesn't work, dont' know why
 	public static Solution DepthFirstSearch(ClausesSet clset) {
 		Solution solution = new Solution(clset.getNumberVariables()); /* Store actual solution */
 		Stack<NodeBlind> open = new Stack<NodeBlind>(); /* Store candidate nodes to develop */
@@ -54,39 +53,4 @@ public abstract class BlindSearch {
 		return bestSolution;
 	}
 
-
-	public static Solution BreadthFirstSearch(ClausesSet clset) {
-		LinkedList<Solution> open = new LinkedList<Solution>();
-		Solution currentSol = new Solution(clset.getNumberVariables());
-
-		Solution bestSolution = new Solution(currentSol);
-
-		int randomLiteral;
-
-		long startTime = System.currentTimeMillis(); /* Save the start time of the search */
-
-		do {
-			if(! open.isEmpty())
-				currentSol = open.removeFirst();
-
-			if(currentSol.getActiveLiterals() == clset.getNumberVariables())
-				continue;
-
-			randomLiteral = currentSol.randomLiteral(clset.getNumberVariables());
-
-			for(int i=0; i<2; i++) { /* Loop TWO times for the chosen literal (left child) and its negation (right child) */
-				currentSol.changeLiteral(Math.abs(randomLiteral)-1, i==0 ? randomLiteral : -randomLiteral);
-
-				if(currentSol.satisfiedClauses(clset) > bestSolution.satisfiedClauses(clset))
-					bestSolution = new Solution(currentSol); /* If current solution is better, update the best solution */
-
-				if(currentSol.isSolution(clset)) /* If this solution satisfies all clauses in "clset", return it */
-					return bestSolution;
-
-				open.add(new Solution(currentSol));
-			}
-		}while(! open.isEmpty());
-
-		return bestSolution;
-	}
 }
