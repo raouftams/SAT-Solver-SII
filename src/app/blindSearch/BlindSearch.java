@@ -9,44 +9,44 @@ public abstract class BlindSearch {
 
 	//Doesn't work, dont' know why
 	public static Solution DepthFirstSearch(ClausesSet clset) {
-		Solution solution = new Solution(clset.getNumberVariables()); /* Store actual solution */
-		Stack<NodeBlind> open = new Stack<NodeBlind>(); /* Store candidate nodes to develop */
+		Solution solution = new Solution(clset.getNumberVariables());
+		Stack<NodeBlind> open = new Stack<NodeBlind>();
 
 		Solution bestSolution = new Solution(solution);
 
 		int actual = -1, randomLiteral;
 
-		long startTime = System.currentTimeMillis(); /* Save the start time of the search */
+		long startTime = System.currentTimeMillis();
 
 		do {
-			if(! open.empty()) { /* There are "nodes" in "open" to develop */
-				actual = open.peek().getValue(); /* Get the first (head, last added) element of "open" */
-				solution.changeLiteral(Math.abs(actual)-1, actual); /* Add this element (value of literal) to the solution */
+			if(! open.empty()) {
+				actual = open.peek().getValue();
+				solution.changeLiteral(Math.abs(actual)-1, actual);
 			}
-			if(solution.getActiveLiterals() == clset.getNumberVariables()) { /* Maximum number of literals in the solution reached, moreover it isn't solution of SAT problem */
-				do { /* Recursive delete (go backwards in the tree by removing the nodes) */
-					solution.deleteLiteral(Math.abs(open.peek().getValue())-1); /* Delete from solution the first (head, last added) element of "open" */
-					actual = open.pop().getChildNumber(); /* Get number [1 : First child, 2 : Second child] of deleted node */
-				}while((actual == 2) && (! open.empty())); /* If deleted node is a second child, go backwards in the tree and remove his father */
+			if(solution.getActiveLiterals() == clset.getNumberVariables()) {
+				do {
+					solution.deleteLiteral(Math.abs(open.peek().getValue())-1);
+					actual = open.pop().getChildNumber();
+				}while((actual == 2) && (! open.empty()));
 
 				continue;
 			}
 
-			randomLiteral = solution.randomLiteral(clset.getNumberVariables()); /* Generate a random literal (which doesn't already belong to the solution) */
+			randomLiteral = solution.randomLiteral(clset.getNumberVariables());
 
-			for(int i=0; i<2; i++) { /* Loop TWO times for the chosen literal (left child) and its negation (right child) */
-				solution.changeLiteral(Math.abs(randomLiteral)-1, i==0 ? randomLiteral : -randomLiteral); /* Add (generated literal) or (its negation) to actual solution */
+			for(int i=0; i<2; i++) {
+				solution.changeLiteral(Math.abs(randomLiteral)-1, i==0 ? randomLiteral : -randomLiteral);
 
 				if(solution.satisfiedClauses(clset) > bestSolution.satisfiedClauses(clset))
-					bestSolution = new Solution(solution); /* If current solution is better, update the best solution */
+					bestSolution = new Solution(solution);
 
-				if(solution.isSolution(clset)) /* If this solution satisfies all clauses in "clset", return it */
+				if(solution.isSolution(clset))
 					return bestSolution;
 
-				open.push(new NodeBlind(i==0 ? -randomLiteral : randomLiteral, actual, i==0 ? 2 : 1)); /* Add (the NEGATION of generated literal) or (this literal) to "open" */
+				open.push(new NodeBlind(i==0 ? -randomLiteral : randomLiteral, actual, i==0 ? 2 : 1));
 			}
 
-			solution.deleteLiteral(Math.abs(randomLiteral)-1); /* Delete generated from actual solution */
+			solution.deleteLiteral(Math.abs(randomLiteral)-1);
 
 		}while(! open.empty());
 

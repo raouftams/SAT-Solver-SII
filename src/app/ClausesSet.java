@@ -104,7 +104,6 @@ public class ClausesSet {
     public void addLiteralsAsClause(ArrayList<Literal> literals){
         Clause c = new Clause(literals);
         this.clauses.add(c);
-        System.out.println(this.toString() + "\n dagi");
     }
 
 
