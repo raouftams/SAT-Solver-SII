@@ -116,10 +116,12 @@ public class Solution {
 
 
         for(int i=0; i<clausesSet.getNumberClause(); i++) { /* Browse all clauses of "clauses set" */
-            for(int j=0; j<clausesSet.getClauseSize(); j++) { /* Browse all literals of actual clause */
+            for(int j=0; j<clausesSet.getClauseSize(i); j++) { /* Browse all literals of actual clause */
                 literal = clausesSet.getClause(i).getLiteral(j);
-
-                this.getLiteral(Math.abs(literal.getVar()) - 1);
+                if(literal.getVar() == this.getLiteral(Math.abs(literal.getVar())-1)) {
+                    count++;
+                    break; /* At least one literal satisfies the clause ==> this clause is satisfied */
+                }
             }
         }
 
@@ -140,7 +142,7 @@ public class Solution {
         for(int i=0; i<clausesSet.getNumberClause(); i++) { /* Browse all clauses of "clausesSet" */
             solutionSatClause = false;		literalSatClause = false;
 
-            for(int j=0; j<clausesSet.getClauseSize(); j++) { /* Browse all literals of current clause */
+            for(int j=0; j<clausesSet.getClauseSize(i); j++) { /* Browse all literals of current clause */
                 tempLiteral = clausesSet.getClause(i).getLiteral(j);
                 if(literal == tempLiteral.getVar())
                     literalSatClause = true; /* The literal satisfies the current clause (number "i") */

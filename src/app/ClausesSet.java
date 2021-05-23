@@ -77,12 +77,12 @@ public class ClausesSet {
     }
 
 
-    public int getClauseSize(){ /* Get number of literals contained in each clause */
-        return this.clauseSize;
+    public int getClauseSize(int position){ /* Get number of literals contained in each clause */
+        return this.clauses.get(position).numberOfLiterals();
     }
 
 
-    public int getNumberVariables() { /* Get number of variables defined in this SAT problem */
+    public int numberOfVariables() { /* Get number of variables defined in this SAT problem */
         return numberVariables;
     }
 
