@@ -3,6 +3,7 @@ package gui;
 import app.ClausesSet;
 import app.Solution;
 import app.blindSearch.BlindSearch;
+import app.heuristic.Heuristic;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -94,7 +95,7 @@ public class Panel extends JPanel {
 
         //results Text
         JLabel resultsLabel = new JLabel();
-        resultsLabel.setBounds(600, 380, 200, 60);
+        resultsLabel.setBounds(580, 200, 220, 60);
         resultsLabel.setText("Results: ");
         add(resultsLabel);
 
@@ -123,12 +124,14 @@ public class Panel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 //get execution time from spinner
                 int executionTime = (int) timeSpinner.getValue();
-                System.out.println(executionTime);
                 Solution solution = null;
                 //check the selected algorithm index
                 switch (algoNumber){
                     case 1:
                         solution = BlindSearch.DepthFirstSearch(clset, executionTime);
+                        break;
+                    case 3:
+                        solution = Heuristic.AStarSearch(clset, executionTime);
                         break;
                     default:
                         //show error message if no algorithm is selected
