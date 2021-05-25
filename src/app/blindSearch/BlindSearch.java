@@ -5,16 +5,22 @@ import app.Solution;
 import java.util.Stack;
 
 public abstract class BlindSearch {
+	public static boolean stop = false;
 
 	//DFS Algorithme using stacks
-	public static Solution DepthFirstSearch(ClausesSet clset) {
+	public static Solution DepthFirstSearch(ClausesSet clset, long executionTime) {
 		Solution solution = new Solution(clset.numberOfVariables());
 		Stack<NodeBlind> open = new Stack<NodeBlind>();
 
 		Solution bestSolution = new Solution(solution);
-
 		int actual = -1, randomLiteral;
+
+		long startTime = System.currentTimeMillis();
+
 		do {
+			if((System.currentTimeMillis() - startTime)/1000 >= executionTime && executionTime != 0)
+				return solution;
+
 			if(! open.empty()) {
 				actual = open.peek().getValue();
 				solution.changeLiteral(Math.abs(actual)-1, actual);
@@ -51,8 +57,6 @@ public abstract class BlindSearch {
 
 
 	//DFS Algorithme using binary tree
-	static boolean stop = false;
-
 	static class Node{
 		int value;
 		Node fg;
@@ -100,5 +104,6 @@ public abstract class BlindSearch {
 	}
 
 
-	//BFS Algorithme here
+
+	//BFS Algorithm here
 }

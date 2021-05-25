@@ -5,7 +5,7 @@ import gui.Frame;
 public class Main {
 
     public static void main(String[] args){
-        Frame frame = new Frame("Intelligent SAT Solver");
+        Frame frame = new Frame("SAT Solver");
         frame.setVisible(true);
 
         //Change the file path
