@@ -7,6 +7,7 @@ import app.blindSearch.BlindSearch;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -45,6 +46,11 @@ public class Panel extends JPanel {
         importButton.setBounds(30, 380, 240, 40);
         add(importButton);
 
+        //Information label
+        JLabel informationLabel = new JLabel();
+        informationLabel.setBounds(10, 420, 500, 40);
+        add(informationLabel);
+
         //Adding variables table to the panel
         variableTable = new JTable();
         DefaultTableModel variableTableModel = new DefaultTableModel();
@@ -65,25 +71,33 @@ public class Panel extends JPanel {
         //Adding a combobox for algorithm selection
         String[] algorithms = {"Select search method", "Depth First Search", "Breadth First Search", "A* search"};
         JComboBox selectAlgoBox = new JComboBox(algorithms);
-        selectAlgoBox.setBounds(600, 25, 150, 30);
+        selectAlgoBox.setBounds(580, 25, 170, 30);
         add(selectAlgoBox);
 
         //Start button
         JButton startButton = new JButton("Start resolution");
-        startButton.setBounds(600, 80, 150, 40);
+        startButton.setBounds(580, 80, 170, 40);
         startButton.setEnabled(false);
         add(startButton);
 
-        //Stop button
-        JButton stopButton = new JButton("Stop resolution");
-        stopButton.setBounds(600, 120, 150, 40);
-        stopButton.setEnabled(false);
-        add(stopButton);
+        //execution time spinner
+        SpinnerModel model = new SpinnerNumberModel(5, 0, 15000, 1);
+        JSpinner timeSpinner = new JSpinner(model);
+        timeSpinner.setBounds(680, 130, 70, 30);
+        add(timeSpinner);
 
-        //Information label
-        JLabel informationLabel = new JLabel();
-        informationLabel.setBounds(300, 380, 500, 40);
-        add(informationLabel);
+        JLabel timeSpinnerLabel = new JLabel();
+        timeSpinnerLabel.setBounds(580, 135, 200, 50);
+        timeSpinnerLabel.setText("<html>Execution time: <br/><br/>Set time to 0 to execute until the end</html>");
+        add(timeSpinnerLabel);
+
+
+        //results Text
+        JLabel resultsLabel = new JLabel();
+        resultsLabel.setBounds(600, 380, 200, 60);
+        resultsLabel.setText("Results: ");
+        add(resultsLabel);
+
 
         // Import button action listner
         importButton.addActionListener(new ActionListener() {
@@ -107,17 +121,22 @@ public class Panel extends JPanel {
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //get execution time from spinner
+                int executionTime = (int) timeSpinner.getValue();
+                System.out.println(executionTime);
                 Solution solution = null;
                 //check the selected algorithm index
                 switch (algoNumber){
                     case 1:
-                        solution = BlindSearch.DepthFirstSearch(clset);
+                        solution = BlindSearch.DepthFirstSearch(clset, executionTime);
                         break;
                     default:
                         //show error message if no algorithm is selected
                         JOptionPane.showMessageDialog(new JFrame(), "Please select a search method", "Dialog",
                                 JOptionPane.ERROR_MESSAGE);
                 }
+
+                resultsLabel.setText("<html>Results:<br/> Number of satisfied clauses: " + solution.satisfiedClauses(clset) + "<br/>Satisfiability rate: " + Long.valueOf(solution.satisfiedClauses(clset)*100/ clset.getNumberClause()) + "%</html>");
 
                 //Adding solution values to the variables table
                 DefaultTableModel tableModel = new DefaultTableModel();
@@ -141,6 +160,7 @@ public class Panel extends JPanel {
                 algoNumber = selectAlgoBox.getSelectedIndex();
             }
         });
+
     }
 
     //Instantiation of the clausesSet and adding values to clauses table
