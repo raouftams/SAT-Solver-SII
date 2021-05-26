@@ -130,6 +130,9 @@ public class Panel extends JPanel {
                     case 1:
                         solution = BlindSearch.DepthFirstSearch(clset, executionTime);
                         break;
+                    case 2:
+                        solution = BlindSearch.BreadthFirstSearch(clset, executionTime);
+                        break;
                     case 3:
                         solution = Heuristic.AStarSearch(clset, executionTime);
                         break;

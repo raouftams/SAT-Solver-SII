@@ -2,6 +2,8 @@ package app.blindSearch;
 
 import app.ClausesSet;
 import app.Solution;
+
+import java.util.LinkedList;
 import java.util.Stack;
 
 public abstract class BlindSearch {
@@ -55,7 +57,6 @@ public abstract class BlindSearch {
 		return bestSolution;
 	}
 
-
 	//DFS Algorithme using binary tree
 	static class Node{
 		int value;
@@ -105,5 +106,48 @@ public abstract class BlindSearch {
 
 
 
-	//BFS Algorithm here
+	//BFS Algorithm using queue
+	public static Solution BreadthFirstSearch(ClausesSet clset, long executionTime){
+		//Queue of solutions
+		LinkedList<Solution> open = new LinkedList<>();
+
+		Solution currentSolution = new Solution(clset.numberOfVariables());
+		Solution bestSolution = new Solution(currentSolution);
+
+		int randomLiteral;
+
+		long startTime = System.currentTimeMillis();
+
+		do {
+			if ((System.currentTimeMillis() - startTime)/1000 >= executionTime && executionTime != 0)
+				return bestSolution;
+
+			if (!open.isEmpty())
+				currentSolution = open.removeFirst();
+
+			if(currentSolution.getActiveLiterals() == clset.numberOfVariables())
+				continue;
+
+			//Selecting a random literal from current solution (node) to develop
+			randomLiteral = currentSolution.randomLiteral(clset.numberOfVariables());
+
+			for(int i=0; i<2; i++) { // Looping 2 times to add both the positive value and the negative value of the chosen literal
+				currentSolution.changeLiteral(Math.abs(randomLiteral)-1, i==0 ? randomLiteral : -randomLiteral);
+
+				// Checking if the current solution is better than the last saved one
+				if(currentSolution.satisfiedClauses(clset) > bestSolution.satisfiedClauses(clset))
+					bestSolution = new Solution(currentSolution);
+
+				// If the solution satisfies all clauses than return it
+				if(currentSolution.isSolution(clset))
+					return bestSolution;
+
+				open.add(new Solution(currentSolution));
+			}
+		}while(! open.isEmpty());
+
+		return bestSolution;
+
+	}
+
 }
